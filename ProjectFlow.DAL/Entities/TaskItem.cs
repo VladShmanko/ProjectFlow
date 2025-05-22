@@ -1,7 +1,4 @@
-﻿    using TaskStatus = ProjectFlow.DAL.Entities.Enums.TaskStatus;
-    using TaskPriority = ProjectFlow.DAL.Entities.Enums.TaskPriority;
-
-    namespace ProjectFlow.DAL.Entities;
+﻿namespace ProjectFlow.DAL.Entities;
 
     public class TaskItem
     {
