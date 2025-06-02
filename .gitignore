@@ -22,6 +22,7 @@ out/
 
 # VS Code
 .vscode/
+.vs/
 
 # ASP.NET Core
 wwwroot/
