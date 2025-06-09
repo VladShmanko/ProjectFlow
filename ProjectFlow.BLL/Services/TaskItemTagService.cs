@@ -1,4 +1,5 @@
-﻿using ProjectFlow.DAL.Entities;
+﻿using ProjectFlow.BLL.DTOs;
+using ProjectFlow.DAL.Entities;
 using ProjectFlow.DAL.Repositories;
 
 namespace ProjectFlow.BLL.Services
@@ -12,21 +13,43 @@ namespace ProjectFlow.BLL.Services
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<IEnumerable<TaskItemTag>> GetByTaskItemIdAsync(int taskItemId)
+        public async Task<IEnumerable<TaskItemTagDto>> GetByTaskItemIdAsync(int taskItemId)
         {
-            return await _unitOfWork.TaskItemTags.GetByTaskItemIdAsync(taskItemId);
+            var entities = await _unitOfWork.TaskItemTags.GetByTaskItemIdAsync(taskItemId);
+            return entities.Select(e => new TaskItemTagDto
+            {
+                TaskItemId = e.TaskItemId,
+                TagId = e.TagId,
+                TagName = e.Tag.Name 
+            });
+        }
+        public async Task<IEnumerable<TaskItemTagDto>> GetByTagIdAsync(int tagId)
+        {
+            var entities = await _unitOfWork.TaskItemTags.GetByTagIdAsync(tagId);
+            return entities.Select(e => new TaskItemTagDto
+            {
+                TaskItemId = e.TaskItemId,
+                TagId = e.TagId,
+                TagName = e.Tag.Name
+            });
         }
 
-        public async Task<IEnumerable<TaskItemTag>> GetByTagIdAsync(int tagId)
+        public async Task<TaskItemTagDto> AddAsync(TaskItemTagCreateDto dto)
         {
-            return await _unitOfWork.TaskItemTags.GetByTagIdAsync(tagId);
-        }
+            var entity = new TaskItemTag
+            {
+                TaskItemId = dto.TaskItemId,
+                TagId = dto.TagId
+            };
 
-        public async Task<TaskItemTag> AddAsync(TaskItemTag entity)
-        {
             await _unitOfWork.TaskItemTags.AddAsync(entity);
             await _unitOfWork.SaveAsync();
-            return entity;
+
+            return new TaskItemTagDto
+            {
+                TaskItemId = entity.TaskItemId,
+                TagId = entity.TagId
+            };
         }
 
         public async Task<bool> DeleteAsync(int taskItemId, int tagId)
@@ -41,6 +64,5 @@ namespace ProjectFlow.BLL.Services
             await _unitOfWork.SaveAsync();
             return true;
         }
-
     }
 }

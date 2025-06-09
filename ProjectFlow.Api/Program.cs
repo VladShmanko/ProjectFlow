@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using ProjectFlow.Api.Middlewares;
 using ProjectFlow.BLL.Services;
 using ProjectFlow.DAL.Data;
 using ProjectFlow.DAL.Repositories;
@@ -34,6 +35,8 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+app.UseMiddleware<ErrorHandlingMiddleware>();
 
 app.MapControllers();
 

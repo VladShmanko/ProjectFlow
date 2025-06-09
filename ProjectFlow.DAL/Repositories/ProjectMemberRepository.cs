@@ -10,7 +10,7 @@ public class ProjectMemberRepository : GenericRepository<ProjectMember>, IProjec
     {
     }
 
-    public async Task<IEnumerable<ProjectMember>> GetByUserIdAsync(string userId)
+    public async Task<IEnumerable<ProjectMember>> GetByUserIdAsync(int userId)
     {
         return await _dbSet
             .Include(pm => pm.Project)
@@ -18,7 +18,7 @@ public class ProjectMemberRepository : GenericRepository<ProjectMember>, IProjec
             .ToListAsync();
     }
 
-    public async Task<bool> IsUserMemberOfProjectAsync(string userId, int projectId)
+    public async Task<bool> IsUserMemberOfProjectAsync(int userId, int projectId)
     {
         return await _dbSet
             .AnyAsync(pm => pm.UserId == userId && pm.ProjectId == projectId);

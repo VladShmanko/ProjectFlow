@@ -1,4 +1,5 @@
-﻿using ProjectFlow.DAL.Entities;
+﻿using ProjectFlow.BLL.DTOs;
+using ProjectFlow.DAL.Entities;
 using ProjectFlow.DAL.Repositories;
 
 namespace ProjectFlow.BLL.Services
@@ -12,58 +13,99 @@ namespace ProjectFlow.BLL.Services
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<IEnumerable<TaskItem>> GetAllAsync()
+        public async Task<IEnumerable<TaskItemDto>> GetAllAsync()
         {
-            return await _unitOfWork.Tasks.GetAllAsync();
+            var tasks = await _unitOfWork.Tasks.GetAllAsync();
+
+            return tasks.Select(t => new TaskItemDto
+            {
+                Id = t.Id,
+                Title = t.Title,
+                Description = t.Description,
+                Status = t.Status,
+                Priority = t.Priority,
+                DueDate = t.DueDate,
+                CreatedAt = t.CreatedAt,
+                CreatedById = t.CreatedById,
+                ProjectId = t.ProjectId
+            });
         }
 
-        public async Task<IEnumerable<TaskItem>> GetAllWithDetailsAsync()
+        public async Task<TaskItemDto?> GetByIdAsync(int id)
         {
-            return await _unitOfWork.Tasks.GetAllWithTagsAndProjectAsync();
+            var task = await _unitOfWork.Tasks.GetByIdAsync(id);
+            if (task == null)
+                return null;
+
+            return new TaskItemDto
+            {
+                Id = task.Id,
+                Title = task.Title,
+                Description = task.Description,
+                Status = task.Status,
+                Priority = task.Priority,
+                DueDate = task.DueDate,
+                CreatedAt = task.CreatedAt,
+                CreatedById = task.CreatedById,
+                ProjectId = task.ProjectId
+            };
         }
 
-        public async Task<TaskItem?> GetByIdAsync(int id)
+        public async Task<TaskItemDto> CreateAsync(TaskItemCreateDto dto)
         {
-            return await _unitOfWork.Tasks.GetByIdAsync(id);
-        }
+            var task = new TaskItem
+            {
+                Title = dto.Title,
+                Description = dto.Description,
+                Status = dto.Status,
+                Priority = dto.Priority,
+                DueDate = dto.DueDate,
+                CreatedById = dto.CreatedById,
+                ProjectId = dto.ProjectId
+            };
 
-        public async Task<TaskItem?> GetWithDetailsByIdAsync(int id)
-        {
-            return await _unitOfWork.Tasks.GetWithDetailsByIdAsync(id);
-        }
-
-        public async Task<TaskItem> CreateAsync(TaskItem taskItem)
-        {
-            await _unitOfWork.Tasks.AddAsync(taskItem);
+            await _unitOfWork.Tasks.AddAsync(task);
             await _unitOfWork.SaveAsync();
-            return taskItem;
+
+            return new TaskItemDto
+            {
+                Id = task.Id,
+                Title = task.Title,
+                Description = task.Description,
+                Status = task.Status,
+                Priority = task.Priority,
+                DueDate = task.DueDate,
+                CreatedAt = task.CreatedAt,
+                CreatedById = task.CreatedById,
+                ProjectId = task.ProjectId
+            };
         }
 
-        public async Task<bool> UpdateAsync(TaskItem taskItem)
+        public async Task<bool> UpdateAsync(TaskItemUpdateDto dto)
         {
-            var existing = await _unitOfWork.Tasks.GetByIdAsync(taskItem.Id);
-            if (existing is null)
+            var task = await _unitOfWork.Tasks.GetByIdAsync(dto.Id);
+            if (task == null)
                 return false;
 
-            existing.Title = taskItem.Title;
-            existing.Description = taskItem.Description;
-            existing.Status = taskItem.Status;
-            existing.Priority = taskItem.Priority;
-            existing.DueDate = taskItem.DueDate;
-            existing.ProjectId = taskItem.ProjectId;
+            task.Title = dto.Title;
+            task.Description = dto.Description;
+            task.Status = dto.Status;
+            task.Priority = dto.Priority;
+            task.DueDate = dto.DueDate;
+            task.ProjectId = dto.ProjectId;
 
-            _unitOfWork.Tasks.Update(existing);
+            _unitOfWork.Tasks.Update(task);
             await _unitOfWork.SaveAsync();
             return true;
         }
 
         public async Task<bool> DeleteAsync(int id)
         {
-            var taskItem = await _unitOfWork.Tasks.GetByIdAsync(id);
-            if (taskItem is null)
+            var task = await _unitOfWork.Tasks.GetByIdAsync(id);
+            if (task == null)
                 return false;
 
-            _unitOfWork.Tasks.Delete(taskItem);
+            _unitOfWork.Tasks.Delete(task);
             await _unitOfWork.SaveAsync();
             return true;
         }

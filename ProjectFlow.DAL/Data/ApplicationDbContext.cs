@@ -22,11 +22,11 @@ public class ApplicationDbContext : DbContext
         base.OnModelCreating(modelBuilder);
         
         modelBuilder.Entity<User>().HasData(
-            new User { Id = "u1", Username = "alice", Email = "alice@example.com", Password = "pass1", Role = "User" },
-            new User { Id = "u2", Username = "bob", Email = "bob@example.com", Password = "pass2", Role = "User" },
-            new User { Id = "u3", Username = "charlie", Email = "charlie@example.com", Password = "pass3", Role = "Admin" },
-            new User { Id = "u4", Username = "dave", Email = "dave@example.com", Password = "pass4", Role = "User" },
-            new User { Id = "u5", Username = "eve", Email = "eve@example.com", Password = "pass5", Role = "User" }
+            new User { Id = 1, Username = "alice", Email = "alice@example.com", Password = "pass1", Role = "User" },
+            new User { Id = 2, Username = "bob", Email = "bob@example.com", Password = "pass2", Role = "User" },
+            new User { Id = 3, Username = "charlie", Email = "charlie@example.com", Password = "pass3", Role = "Admin" },
+            new User { Id = 4, Username = "dave", Email = "dave@example.com", Password = "pass4", Role = "User" },
+            new User { Id = 5, Username = "eve", Email = "eve@example.com", Password = "pass5", Role = "User" }
         );
         
         modelBuilder.Entity<Project>().HasData(
@@ -53,7 +53,7 @@ public class ApplicationDbContext : DbContext
                 Description = "Initialize git repository",
                 Status = "Pending",
                 Priority = "Normal",
-                CreatedById = "u1",
+                CreatedById = 1,
                 ProjectId = 1,
                 CreatedAt = DateTime.UtcNow
             },
@@ -64,7 +64,7 @@ public class ApplicationDbContext : DbContext
                 Description = "ER diagram for project",
                 Status = "InProgress",
                 Priority = "High",
-                CreatedById = "u2",
+                CreatedById = 2,
                 ProjectId = 2,
                 CreatedAt = DateTime.UtcNow
             },
@@ -75,7 +75,7 @@ public class ApplicationDbContext : DbContext
                 Description = "Add JWT and Identity",
                 Status = "Completed",
                 Priority = "Critical",
-                CreatedById = "u3",
+                CreatedById = 3,
                 ProjectId = 3,
                 CreatedAt = DateTime.UtcNow
             },
@@ -86,7 +86,7 @@ public class ApplicationDbContext : DbContext
                 Description = "React + Tailwind layout",
                 Status = "Pending",
                 Priority = "Low",
-                CreatedById = "u4",
+                CreatedById = 4,
                 ProjectId = 4,
                 CreatedAt = DateTime.UtcNow
             },
@@ -97,18 +97,18 @@ public class ApplicationDbContext : DbContext
                 Description = "Unit + Integration tests",
                 Status = "Archived",
                 Priority = "Normal",
-                CreatedById = "u5",
+                CreatedById = 5,
                 ProjectId = 5,
                 CreatedAt = DateTime.UtcNow
             }
         );
         
         modelBuilder.Entity<ProjectMember>().HasData(
-            new ProjectMember { UserId = "u1", ProjectId = 1 },
-            new ProjectMember { UserId = "u2", ProjectId = 1 },
-            new ProjectMember { UserId = "u3", ProjectId = 2 },
-            new ProjectMember { UserId = "u4", ProjectId = 3 },
-            new ProjectMember { UserId = "u5", ProjectId = 4 }
+            new ProjectMember { UserId = 1, ProjectId = 1 },
+            new ProjectMember { UserId = 2, ProjectId = 1 },
+            new ProjectMember { UserId = 3, ProjectId = 2 },
+            new ProjectMember { UserId = 4, ProjectId = 3 },
+            new ProjectMember { UserId = 5, ProjectId = 4 }
         );
         
         modelBuilder.Entity<TaskItemTag>().HasData(

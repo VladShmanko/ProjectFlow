@@ -1,4 +1,5 @@
-﻿using ProjectFlow.DAL.Entities;
+﻿using ProjectFlow.BLL.DTOs;
+using ProjectFlow.DAL.Entities;
 using ProjectFlow.DAL.Repositories;
 
 namespace ProjectFlow.BLL.Services
@@ -12,43 +13,56 @@ namespace ProjectFlow.BLL.Services
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<IEnumerable<User>> GetAllAsync()
+        public async Task<IEnumerable<UserDto>> GetAllAsync()
         {
-            return await _unitOfWork.Users.GetAllAsync();
+            var users = await _unitOfWork.Users.GetAllAsync();
+            return users.Select(u => MapToDto(u));
         }
 
-        public async Task<User?> GetByIdAsync(int id)
+        public async Task<UserDto?> GetByIdAsync(int id)
         {
-            return await _unitOfWork.Users.GetByIdAsync(id);
+            var user = await _unitOfWork.Users.GetByIdAsync(id);
+            return user is null ? null : MapToDto(user);
         }
 
-        public async Task<User?> GetByUsernameAsync(string username)
+        public async Task<UserDto?> GetByUsernameAsync(string username)
         {
-            return await _unitOfWork.Users.GetByUsernameAsync(username);
+            var user = await _unitOfWork.Users.GetByUsernameAsync(username);
+            return user is null ? null : MapToDto(user);
         }
 
-        public async Task<User?> GetByEmailAsync(string email)
+        public async Task<UserDto?> GetByEmailAsync(string email)
         {
-            return await _unitOfWork.Users.GetByEmailAsync(email);
+            var user = await _unitOfWork.Users.GetByEmailAsync(email);
+            return user is null ? null : MapToDto(user);
         }
 
-        public async Task<User> CreateAsync(User user)
+        public async Task<UserDto> CreateAsync(UserCreateDto dto)
         {
+            var user = new User
+            {
+                Username = dto.Username,
+                Email = dto.Email,
+                Password = dto.Password,
+                Role = dto.Role
+            };
+
             await _unitOfWork.Users.AddAsync(user);
             await _unitOfWork.SaveAsync();
-            return user;
+
+            return MapToDto(user);
         }
 
-        public async Task<bool> UpdateAsync(User user)
+        public async Task<bool> UpdateAsync(UserUpdateDto dto)
         {
-            var existingUser = await _unitOfWork.Users.GetByIdAsync(user.Id);
-            if (existingUser is null)
+            var existingUser = await _unitOfWork.Users.GetByIdAsync(dto.Id);
+            if (existingUser == null)
                 return false;
 
-            existingUser.Username = user.Username;
-            existingUser.Email = user.Email;
-            existingUser.Password = user.Password;
-            existingUser.Role = user.Role;
+            existingUser.Username = dto.Username;
+            existingUser.Email = dto.Email;
+            existingUser.Password = dto.Password;
+            existingUser.Role = dto.Role;
 
             _unitOfWork.Users.Update(existingUser);
             await _unitOfWork.SaveAsync();
@@ -58,12 +72,20 @@ namespace ProjectFlow.BLL.Services
         public async Task<bool> DeleteAsync(int id)
         {
             var user = await _unitOfWork.Users.GetByIdAsync(id);
-            if (user is null)
+            if (user == null)
                 return false;
 
             _unitOfWork.Users.Delete(user);
             await _unitOfWork.SaveAsync();
             return true;
         }
+
+        private UserDto MapToDto(User user) => new()
+        {
+            Id = user.Id,
+            Username = user.Username,
+            Email = user.Email,
+            Role = user.Role
+        };
     }
 }

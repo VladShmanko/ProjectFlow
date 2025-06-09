@@ -1,15 +1,16 @@
-﻿using ProjectFlow.DAL.Entities;
+﻿using ProjectFlow.BLL.DTOs;
+using ProjectFlow.DAL.Entities;
 
 namespace ProjectFlow.BLL.Services
 {
     public interface IUserService
     {
-        Task<IEnumerable<User>> GetAllAsync();
-        Task<User?> GetByIdAsync(int id);
-        Task<User?> GetByUsernameAsync(string username);
-        Task<User?> GetByEmailAsync(string email);
-        Task<User> CreateAsync(User user);
-        Task<bool> UpdateAsync(User user);
+        Task<IEnumerable<UserDto>> GetAllAsync();
+        Task<UserDto?> GetByIdAsync(int id);
+        Task<UserDto?> GetByUsernameAsync(string username);
+        Task<UserDto?> GetByEmailAsync(string email);
+        Task<UserDto> CreateAsync(UserCreateDto dto);
+        Task<bool> UpdateAsync(UserUpdateDto dto);
         Task<bool> DeleteAsync(int id);
     }
 }

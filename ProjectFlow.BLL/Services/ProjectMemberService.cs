@@ -1,4 +1,5 @@
-﻿using ProjectFlow.DAL.Entities;
+﻿using ProjectFlow.BLL.DTOs;
+using ProjectFlow.DAL.Entities;
 using ProjectFlow.DAL.Repositories;
 
 namespace ProjectFlow.BLL.Services
@@ -12,24 +13,36 @@ namespace ProjectFlow.BLL.Services
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<IEnumerable<ProjectMember>> GetByUserIdAsync(string userId)
+        public async Task<IEnumerable<ProjectMemberDto>> GetByUserIdAsync(int userId)
         {
-            return await _unitOfWork.ProjectMembers.GetByUserIdAsync(userId);
+            var members = await _unitOfWork.ProjectMembers.GetByUserIdAsync(userId);
+            return members.Select(m => new ProjectMemberDto
+            {
+                UserId = m.UserId,
+                ProjectId = m.ProjectId
+            });
         }
 
-        public async Task<bool> IsUserMemberOfProjectAsync(string userId, int projectId)
+        public async Task<bool> IsUserMemberOfProjectAsync(int userId, int projectId)
         {
             return await _unitOfWork.ProjectMembers.IsUserMemberOfProjectAsync(userId, projectId);
         }
 
-        public async Task<ProjectMember> AddAsync(ProjectMember member)
+        public async Task<ProjectMemberDto> AddAsync(ProjectMemberDto memberDto)
         {
+            var member = new ProjectMember
+            {
+                UserId = memberDto.UserId,
+                ProjectId = memberDto.ProjectId
+            };
+
             await _unitOfWork.ProjectMembers.AddAsync(member);
             await _unitOfWork.SaveAsync();
-            return member;
+
+            return memberDto;
         }
 
-        public async Task<bool> RemoveAsync(string userId, int projectId)
+        public async Task<bool> RemoveAsync(int userId, int projectId)
         {
             var members = await _unitOfWork.ProjectMembers.GetByUserIdAsync(userId);
             var memberToRemove = members.FirstOrDefault(m => m.ProjectId == projectId);

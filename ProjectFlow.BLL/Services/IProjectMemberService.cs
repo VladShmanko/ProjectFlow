@@ -1,12 +1,13 @@
-﻿using ProjectFlow.DAL.Entities;
+﻿using ProjectFlow.BLL.DTOs;
+using ProjectFlow.DAL.Entities;
 
 namespace ProjectFlow.BLL.Services
 {
     public interface IProjectMemberService
     {
-        Task<IEnumerable<ProjectMember>> GetByUserIdAsync(string userId);
-        Task<bool> IsUserMemberOfProjectAsync(string userId, int projectId);
-        Task<ProjectMember> AddAsync(ProjectMember member);
-        Task<bool> RemoveAsync(string userId, int projectId);
+        Task<IEnumerable<ProjectMemberDto>> GetByUserIdAsync(int userId);
+        Task<bool> IsUserMemberOfProjectAsync(int userId, int projectId);
+        Task<ProjectMemberDto> AddAsync(ProjectMemberDto memberDto);
+        Task<bool> RemoveAsync(int userId, int projectId);
     }
 }

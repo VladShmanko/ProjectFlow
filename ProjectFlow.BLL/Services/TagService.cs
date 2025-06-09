@@ -1,4 +1,5 @@
-﻿using ProjectFlow.DAL.Entities;
+﻿using ProjectFlow.BLL.DTOs;
+using ProjectFlow.DAL.Entities;
 using ProjectFlow.DAL.Repositories;
 
 namespace ProjectFlow.BLL.Services
@@ -12,45 +13,53 @@ namespace ProjectFlow.BLL.Services
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<IEnumerable<Tag>> GetAllAsync()
+        public async Task<IEnumerable<TagDto>> GetAllAsync()
         {
-            return await _unitOfWork.Tags.GetAllAsync();
+            var tags = await _unitOfWork.Tags.GetAllAsync();
+            return tags.Select(t => new TagDto
+            {
+                Id = t.Id,
+                Name = t.Name
+            });
         }
 
-        public async Task<Tag?> GetByIdAsync(int id)
+        public async Task<TagDto?> GetByIdAsync(int id)
         {
-            return await _unitOfWork.Tags.GetByIdAsync(id);
+            var tag = await _unitOfWork.Tags.GetByIdAsync(id);
+            return tag == null ? null : new TagDto { Id = tag.Id, Name = tag.Name };
         }
 
-        public async Task<Tag?> GetByNameAsync(string name)
+        public async Task<TagDto?> GetByNameAsync(string name)
         {
-            return await _unitOfWork.Tags.GetByNameAsync(name);
+            var tag = await _unitOfWork.Tags.GetByNameAsync(name);
+            return tag == null ? null : new TagDto { Id = tag.Id, Name = tag.Name };
         }
 
-        public async Task<Tag> CreateAsync(Tag tag)
+        public async Task<TagDto> CreateAsync(CreateTagDto tagDto)
         {
+            var tag = new Tag { Name = tagDto.Name };
             await _unitOfWork.Tags.AddAsync(tag);
             await _unitOfWork.SaveAsync();
-            return tag;
+
+            return new TagDto { Id = tag.Id, Name = tag.Name };
         }
 
-        public async Task<bool> UpdateAsync(Tag tag)
+        public async Task<bool> UpdateAsync(UpdateTagDto tagDto)
         {
-            var existing = await _unitOfWork.Tags.GetByIdAsync(tag.Id);
-            if (existing == null)
-                return false;
+            var existing = await _unitOfWork.Tags.GetByIdAsync(tagDto.Id);
+            if (existing == null) return false;
 
-            existing.Name = tag.Name;
+            existing.Name = tagDto.Name;
             _unitOfWork.Tags.Update(existing);
             await _unitOfWork.SaveAsync();
+
             return true;
         }
 
         public async Task<bool> DeleteAsync(int id)
         {
             var tag = await _unitOfWork.Tags.GetByIdAsync(id);
-            if (tag == null)
-                return false;
+            if (tag == null) return false;
 
             _unitOfWork.Tags.Delete(tag);
             await _unitOfWork.SaveAsync();

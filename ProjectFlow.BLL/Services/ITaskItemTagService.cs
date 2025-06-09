@@ -1,12 +1,13 @@
-﻿using ProjectFlow.DAL.Entities;
+﻿using ProjectFlow.BLL.DTOs;
+using ProjectFlow.DAL.Entities;
 
 namespace ProjectFlow.BLL.Services
 {
     public interface ITaskItemTagService
     {
-        Task<IEnumerable<TaskItemTag>> GetByTaskItemIdAsync(int taskItemId);
-        Task<IEnumerable<TaskItemTag>> GetByTagIdAsync(int tagId);
-        Task<TaskItemTag> AddAsync(TaskItemTag entity);
+        Task<IEnumerable<TaskItemTagDto>> GetByTaskItemIdAsync(int taskItemId);
+        Task<IEnumerable<TaskItemTagDto>> GetByTagIdAsync(int tagId);
+        Task<TaskItemTagDto> AddAsync(TaskItemTagCreateDto dto);
         Task<bool> DeleteAsync(int taskItemId, int tagId);
     }
 }
